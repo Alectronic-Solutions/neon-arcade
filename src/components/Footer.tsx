@@ -1,11 +1,17 @@
 import { operatingHours } from '@/data/arcade'
 
 const NAV_LINKS = [
-  { label: 'About', href: '#' },
-  { label: 'Packages', href: '#packages' },
-  { label: 'Game Catalog', href: '#games' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Book a Party', href: '#book' },
+  { label: 'Packages', href: '/#packages' },
+  { label: 'Game Catalog', href: '/#games' },
+  { label: 'Gallery', href: '/#gallery' },
+  { label: 'Book a Party', href: '/#book' },
+  { label: 'Contact', href: '/contact' },
+]
+
+const LEGAL_LINKS = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Cookie Policy', href: '/cookies' },
 ]
 
 const SOCIAL = [
@@ -135,6 +141,19 @@ export default function Footer() {
           className="border-t mb-6"
           style={{ borderColor: 'rgba(0,240,255,0.08)' }}
         />
+
+        {/* Legal links row */}
+        <div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 mb-6">
+          {LEGAL_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="font-mono text-arcade-muted text-xs tracking-widest hover:text-neon-cyan transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
 
         {/* Lower bar */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3">

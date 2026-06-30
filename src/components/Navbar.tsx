@@ -43,7 +43,7 @@ export default function Navbar() {
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 shrink-0">
+          <a href="./" className="flex items-center gap-2 shrink-0">
             <span
               className="font-mono font-bold tracking-widest text-neon-cyan text-base sm:text-lg"
               style={{ textShadow: '0 0 16px rgba(0,240,255,0.5)' }}

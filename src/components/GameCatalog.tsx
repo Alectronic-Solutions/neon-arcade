@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { arcadeMachines, type ArcadeMachine } from '@/data/arcade'
+import GameModal from './GameModal'
 
 type Era = 'all' | 'golden-age' | 'classics' | 'fighters' | 'pinball-rhythm'
 
@@ -23,7 +24,7 @@ const ERA_LABELS: Record<string, string> = {
 
 const INITIAL_COUNT = 12
 
-function MachineCard({ machine }: { machine: ArcadeMachine }) {
+function MachineCard({ machine, onSelect }: { machine: ArcadeMachine; onSelect: (machine: ArcadeMachine) => void }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -39,6 +40,15 @@ function MachineCard({ machine }: { machine: ArcadeMachine }) {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => onSelect(machine)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect(machine)
+        }
+      }}
+      role="button"
+      tabIndex={0}
     >
       {/* Image area */}
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/3' }}>
@@ -119,6 +129,7 @@ function MachineCard({ machine }: { machine: ArcadeMachine }) {
 export default function GameCatalog() {
   const [activeEra, setActiveEra] = useState<Era>('all')
   const [expanded, setExpanded] = useState(false)
+  const [selectedMachine, setSelectedMachine] = useState<ArcadeMachine | null>(null)
 
   useEffect(() => {
     setExpanded(false)
@@ -133,6 +144,7 @@ export default function GameCatalog() {
   const hiddenCount = filtered.length - INITIAL_COUNT
 
   return (
+    <>
     <section id="games" className="py-28 px-6" style={{ background: '#0B0A16' }}>
       <div className="max-w-6xl mx-auto">
 
@@ -205,7 +217,7 @@ export default function GameCatalog() {
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {visible.map((machine) => (
-            <MachineCard key={machine.id} machine={machine} />
+            <MachineCard key={machine.id} machine={machine} onSelect={setSelectedMachine} />
           ))}
         </div>
 
@@ -242,5 +254,7 @@ export default function GameCatalog() {
         )}
       </div>
     </section>
+    <GameModal machine={selectedMachine} onClose={() => setSelectedMachine(null)} />
+    </>
   )
 }

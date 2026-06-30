@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { arcadeMachines, type ArcadeMachine } from '@/data/arcade'
+import { withBasePath } from '@/lib/paths'
 import GameModal from './GameModal'
 
 type Era = 'all' | 'golden-age' | 'classics' | 'fighters' | 'pinball-rhythm'
@@ -53,7 +54,7 @@ function MachineCard({ machine, onSelect }: { machine: ArcadeMachine; onSelect: 
       {/* Image area */}
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/3' }}>
         <Image
-          src={machine.coverImage}
+          src={withBasePath(machine.coverImage)}
           alt={machine.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

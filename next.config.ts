@@ -1,11 +1,15 @@
 import type { NextConfig } from "next";
 
 const isGithubPages = process.env.GITHUB_PAGES === "true";
+const basePath = isGithubPages ? "/neon-arcade" : "";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: isGithubPages ? "/neon-arcade" : "",
+  basePath,
   assetPrefix: isGithubPages ? "/neon-arcade/" : "",
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
   images: {
     unoptimized: true,
     remotePatterns: [

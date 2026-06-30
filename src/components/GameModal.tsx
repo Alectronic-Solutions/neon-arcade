@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { ArcadeMachine } from '@/data/arcade'
+import { withBasePath } from '@/lib/paths'
 
 const ERA_LABELS: Record<string, string> = {
   'golden-age':     '70s',
@@ -98,7 +99,7 @@ export default function GameModal({
         {/* Image area */}
         <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
           <Image
-            src={machine.coverImage}
+            src={withBasePath(machine.coverImage)}
             alt={machine.name}
             fill
             sizes="520px"

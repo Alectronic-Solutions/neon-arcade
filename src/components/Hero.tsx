@@ -1,17 +1,19 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import HeroVideoBackground from './HeroVideoBackground'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
+  const videoLayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const el = sectionRef.current
+    const el = videoLayerRef.current
     if (!el) return
 
     const handleScroll = () => {
       if (window.innerWidth < 768) return
-      el.style.backgroundPosition = `center, center ${window.scrollY * 0.4}px`
+      el.style.transform = `translateY(${window.scrollY * 0.18}px)`
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -47,25 +49,24 @@ export default function Hero() {
       <section
         ref={sectionRef}
         className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-arcade-bg pt-16"
-        style={{
-          backgroundImage: [
-            'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(11,10,22,0.72) 0%, rgba(11,10,22,0.92) 70%)',
-            'url(https://images.unsplash.com/photo-1511882150382-421056c89033?w=1800&q=80)',
-          ].join(', '),
-          backgroundSize: 'auto, cover',
-          backgroundPosition: 'center, center',
-          backgroundRepeat: 'no-repeat, no-repeat',
-        }}
       >
-        {/* Decorative grid lines */}
+        {/* Video background */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.04]"
+          ref={videoLayerRef}
+          className="absolute inset-x-0 top-[-5%] h-[110%] z-0"
+        >
+          <HeroVideoBackground />
+        </div>
+
+        {/* Dark vignette overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none z-1"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(0,240,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,1) 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
+              'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(11,10,22,0.55) 0%, rgba(11,10,22,0.88) 70%), linear-gradient(rgba(11,10,22,0.45), rgba(11,10,22,0.45))',
           }}
         />
+
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">

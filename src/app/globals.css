@@ -56,6 +56,32 @@ input[type="date"] {
   color-scheme: dark;
 }
 
+/* Premium slim scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #FF007F #15132B;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #15132B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00F0FF, #FF007F);
+  border-radius: 9999px;
+  border: 1px solid rgba(248, 248, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FF007F, #00F0FF);
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.5);
+}
+
 /* Pointer cursor for all interactive elements */
 a,
 button,

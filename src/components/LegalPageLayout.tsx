@@ -37,7 +37,7 @@ export default function LegalPageLayout({
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main-content">
         <section className="bg-arcade-bg pt-32 pb-24 px-6 min-h-screen">
           <div className="max-w-3xl mx-auto">
             <h1

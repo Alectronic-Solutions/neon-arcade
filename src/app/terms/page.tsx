@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
 import LegalPageLayout, { LegalSection } from '@/components/LegalPageLayout'
 
+const TITLE = 'Terms of Service'
+const DESCRIPTION = 'The terms that govern use of the Neon Arcade website and bookings at our private event venue in Sacramento, CA.'
+
 export const metadata: Metadata = {
-  title: 'Terms of Service | Neon Arcade',
-  description: 'The terms that govern use of the Neon Arcade website and bookings at our private event venue in Sacramento, CA.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: 'terms' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: 'terms' },
+  twitter: { title: TITLE, description: DESCRIPTION },
 }
 
 export default function TermsPage() {
@@ -42,7 +48,7 @@ export default function TermsPage() {
 
       <LegalSection title="No Warranty">
         <p>
-          We make reasonable efforts to keep all cabinets and equipment in working order, but we do not guarantee that every game will be available or fully operational during your visit or event. The website and its content are provided "as is" without warranties of any kind.
+          We make reasonable efforts to keep all cabinets and equipment in working order, but we do not guarantee that every game will be available or fully operational during your visit or event. The website and its content are provided &ldquo;as is&rdquo; without warranties of any kind.
         </p>
       </LegalSection>
 

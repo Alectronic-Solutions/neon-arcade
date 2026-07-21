@@ -35,6 +35,11 @@ export interface DaySchedule {
   privateWindow?: { start: string; end: string }
 }
 
+export interface FaqItem {
+  question: string
+  answer: string
+}
+
 export const partyPackages: PartyPackage[] = [
   {
     id: 'player1',
@@ -153,6 +158,39 @@ export const arcadeMachines: ArcadeMachine[] = [
   { id: 'ddr-98',             name: 'Dance Dance Revolution',     manufacturer: 'Konami',                  year: 1998, era: 'pinball-rhythm', players: 2, genre: 'Rhythm / Dance',             coverImage: '/games/ddr.png', description: 'A light-up dance platform that scores every step against the beat. The cabinet that proved a rhythm game could also be a full-body workout.' },
   { id: 'guitar-hero-07',     name: 'Guitar Hero Arcade',         manufacturer: 'Raw Thrills / Activision', year: 2007, era: 'pinball-rhythm', players: 2, genre: 'Rhythm / Music',            coverImage: '/games/guitar-hero.jpg', description: 'A full-size plastic axe, scrolling fret notes, and a crowd meter that lives or dies on your timing. Trade solos head-to-head on the dual-cabinet setup.' },
   { id: 'godzilla-21',        name: 'Godzilla Premium',           manufacturer: 'Stern Pinball',           year: 2021, era: 'pinball-rhythm', players: 4, genre: 'Pinball',                    coverImage: '/games/godzilla.jpg', description: 'A monster-scaled translite, a moving Godzilla figure that swats the ball field, and modern Stern code on a brand-new premium build.' },
+]
+
+export const faqItems: FaqItem[] = [
+  {
+    question: 'How much does it cost to book a private party at Neon Arcade?',
+    answer:
+      "Player 1 starts at $18 per guest for a 2-hour block (10-40 guests). High Roller runs $32 per guest for 3 hours (20-80 guests). Arcade Royalty, our full-venue buyout, is a $1,800 flat rate plus $24 per guest for 5 hours and up to 150 guests. All three tiers include a token bundle, food, and a dedicated party host.",
+  },
+  {
+    question: 'How many guests can Neon Arcade host?',
+    answer:
+      'Our venue accommodates private events from 10 guests up to a maximum capacity of 150 guests for a full venue buyout.',
+  },
+  {
+    question: 'How much is the deposit, and is it refundable?',
+    answer:
+      'Deposits range from 20-30% of the estimated total depending on package, due at booking to secure your date. Deposits are non-refundable within 14 days of the event date.',
+  },
+  {
+    question: 'Can I book a private event outside of regular arcade hours?',
+    answer:
+      'Yes. Most weekdays offer a private morning-to-afternoon window (10:00 AM-3:00 PM) before we open to walk-in play, and Saturday mornings and Sunday afternoons have dedicated private windows as well. Friday nights are reserved for regular walk-in hours and are not available for private buyouts.',
+  },
+  {
+    question: 'Is parking available at Neon Arcade?',
+    answer:
+      'Yes, guests can park in the parking garage adjacent to our venue on 4th St, located at 412 Retro Row, Sacramento, CA 95814.',
+  },
+  {
+    question: 'What is included in the token bundles and food packages?',
+    answer:
+      'Every package includes a per-guest token bundle for free play across all cabinets, ranging from 200 tokens per guest on Player 1 up to 600 tokens per guest on Arcade Royalty. Food ranges from a pizza slice and soft drink per guest on Player 1 to full catered pizza, a slider and wing station, and an open soft bar on Arcade Royalty.',
+  },
 ]
 
 export const operatingHours: DaySchedule[] = [

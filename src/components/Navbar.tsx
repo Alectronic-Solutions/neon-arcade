@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { label: 'Packages', href: '#packages' },
   { label: 'Games', href: '#games' },
   { label: 'Gallery', href: '#gallery' },
+  { label: 'FAQ', href: '#faq' },
   { label: 'Book', href: '#book' },
 ]
 
@@ -79,6 +80,8 @@ export default function Navbar() {
             {/* Mobile hamburger */}
             <button
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
               onClick={() => setMenuOpen((o) => !o)}
               className="md:hidden flex flex-col gap-1.5 p-2 -mr-1"
             >
@@ -101,6 +104,7 @@ export default function Navbar() {
         {/* Mobile menu drawer */}
         {menuOpen && (
           <div
+            id="mobile-menu"
             className="mobile-menu md:hidden border-t border-neon-cyan/15"
             style={{ backgroundColor: 'rgba(11, 10, 22, 0.98)' }}
           >

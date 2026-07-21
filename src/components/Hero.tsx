@@ -11,9 +11,16 @@ export default function Hero() {
     const el = videoLayerRef.current
     if (!el) return
 
-    const handleScroll = () => {
+    let ticking = false
+    const applyTransform = () => {
+      ticking = false
       if (window.innerWidth < 768) return
       el.style.transform = `translateY(${window.scrollY * 0.18}px)`
+    }
+    const handleScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(applyTransform)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -131,13 +138,13 @@ export default function Hero() {
 
         {/* Scroll indicator */}
         <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
-          <span className="font-mono text-neon-cyan/50 text-xs tracking-widest">SCROLL</span>
+          <span className="font-mono text-neon-cyan/65 text-xs tracking-widest">SCROLL</span>
           <svg
             width="16"
             height="24"
             viewBox="0 0 16 24"
             fill="none"
-            className="text-neon-cyan/50"
+            className="text-neon-cyan/65"
           >
             <path
               d="M8 0v18M1 11l7 7 7-7"

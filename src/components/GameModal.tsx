@@ -1,9 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import type { ArcadeMachine } from '@/data/arcade'
 import { withBasePath } from '@/lib/paths'
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
 
 const ERA_LABELS: Record<string, string> = {
   'golden-age':     '70s',
@@ -20,6 +23,9 @@ export default function GameModal({
   onClose: () => void
 }) {
   const [visible, setVisible] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const lastFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (machine) {
@@ -31,14 +37,36 @@ export default function GameModal({
 
   useEffect(() => {
     if (!machine) return
+    lastFocusedRef.current = document.activeElement as HTMLElement | null
     document.body.style.overflow = 'hidden'
+    const focusRaf = requestAnimationFrame(() => closeButtonRef.current?.focus())
+
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const dialog = dialogRef.current
+      if (!dialog) return
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
     window.addEventListener('keydown', handleKey)
     return () => {
+      cancelAnimationFrame(focusRaf)
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKey)
+      lastFocusedRef.current?.focus()
     }
   }, [machine, onClose])
 
@@ -49,7 +77,8 @@ export default function GameModal({
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       role="dialog"
       aria-modal="true"
-      aria-label={machine.name}
+      aria-labelledby="game-modal-title"
+      aria-describedby="game-modal-description"
       style={{
         background: 'rgba(11,10,22,0.78)',
         backdropFilter: 'blur(6px)',
@@ -59,6 +88,7 @@ export default function GameModal({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
         className="relative w-full flex flex-col rounded-sm overflow-hidden"
         style={{
           maxWidth: '520px',
@@ -73,12 +103,13 @@ export default function GameModal({
       >
         {/* Close button */}
         <button
+          ref={closeButtonRef}
           onClick={onClose}
           aria-label="Close"
           className="absolute top-3 right-3 z-10 flex items-center justify-center font-mono text-sm transition-colors duration-150"
           style={{
-            width: '32px',
-            height: '32px',
+            width: '44px',
+            height: '44px',
             color: '#FF007F',
             background: 'rgba(255,0,127,0.1)',
             border: '1px solid rgba(255,0,127,0.45)',
@@ -139,6 +170,7 @@ export default function GameModal({
         {/* Body */}
         <div className="flex flex-col gap-2 px-6 py-5">
           <h3
+            id="game-modal-title"
             className="text-arcade-white font-extrabold uppercase tracking-wide leading-tight"
             style={{ fontSize: 'clamp(1.1rem, 3vw, 1.4rem)' }}
           >
@@ -160,6 +192,7 @@ export default function GameModal({
           />
 
           <p
+            id="game-modal-description"
             className="leading-relaxed"
             style={{ color: '#A39FD1', fontSize: '0.9rem' }}
           >

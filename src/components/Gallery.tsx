@@ -84,15 +84,27 @@ export default function Gallery() {
           box-shadow: 0 0 14px rgba(0,240,255,0.35);
         }
         .gallery-dot {
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+        }
+        .gallery-dot::after {
+          content: '';
+          display: block;
           width: 6px;
           height: 6px;
           border-radius: 50%;
           background: rgba(0,240,255,0.25);
           border: 1px solid rgba(0,240,255,0.4);
           transition: background 0.2s, transform 0.2s;
-          cursor: pointer;
         }
-        .gallery-dot.active {
+        .gallery-dot.active::after {
           background: #00F0FF;
           transform: scale(1.4);
           box-shadow: 0 0 8px rgba(0,240,255,0.6);
@@ -118,11 +130,15 @@ export default function Gallery() {
             </p>
           </div>
 
+          <p className="sr-only" aria-live="polite">
+            Photo {current + 1} of {galleryItems.length}: {item.caption}
+          </p>
+
           {/* Slider */}
           <div style={{ position: 'relative', userSelect: 'none' }}>
             {/* Viewport */}
             <div
-              style={{ overflow: 'hidden', borderRadius: '4px', touchAction: 'none', cursor: dragging ? 'grabbing' : 'grab' }}
+              style={{ overflow: 'hidden', borderRadius: '4px', touchAction: 'pan-y', cursor: dragging ? 'grabbing' : 'grab' }}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
@@ -137,15 +153,21 @@ export default function Gallery() {
                   transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)',
                 }}
               >
-                {galleryItems.map((item) => (
+                {galleryItems.map((item, i) => (
                   <div key={item.id} style={{ minWidth: '100%', position: 'relative', backgroundColor: '#15132B', border: '1px solid rgba(0,240,255,0.15)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ aspectRatio: '4/3', position: 'relative', overflow: 'hidden' }}>
-                      <img
-                        src={`https://images.unsplash.com/photo-${item.unsplashId}?w=1200&q=80`}
-                        alt={item.caption}
-                        draggable={false}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
-                      />
+                      {Math.abs(i - current) <= 1 && (
+                        <img
+                          src={`https://images.unsplash.com/photo-${item.unsplashId}?w=1200&q=80`}
+                          alt={item.caption}
+                          width={1200}
+                          height={900}
+                          loading={i === current ? 'eager' : 'lazy'}
+                          decoding="async"
+                          draggable={false}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
+                        />
+                      )}
                       <div style={{ position: 'absolute', inset: 0, backgroundColor: item.hue, pointerEvents: 'none' }} />
                     </div>
                     {/* Always-visible caption bar */}
@@ -197,7 +219,7 @@ export default function Gallery() {
           </div>
 
           {/* Counter */}
-          <p style={{ textAlign: 'center', fontFamily: 'monospace', color: 'rgba(163,159,209,0.5)', fontSize: '0.7rem', letterSpacing: '0.15em', marginTop: '0.75rem' }}>
+          <p style={{ textAlign: 'center', fontFamily: 'monospace', color: 'rgba(163,159,209,0.75)', fontSize: '0.7rem', letterSpacing: '0.15em', marginTop: '0.75rem' }}>
             {String(current + 1).padStart(2, '0')} / {String(galleryItems.length).padStart(2, '0')}
           </p>
         </div>

@@ -30,7 +30,11 @@ export default function Footer() {
       <div className="relative w-full overflow-hidden" style={{ height: 'clamp(160px, 35vw, 280px)' }}>
         <img
           src="https://images.unsplash.com/photo-1636070759654-5c93bbca2862?w=1600&q=80"
-          alt="Neon Arcade venue interior"
+          alt="Interior of the Neon Arcade venue showing rows of arcade cabinets"
+          width={1600}
+          height={900}
+          loading="lazy"
+          decoding="async"
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', display: 'block' }}
         />
         {/* Dark fade — top and bottom blend into surface color */}
@@ -65,23 +69,22 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               {SOCIAL.map((s) => (
-                <a
+                <span
                   key={s.label}
-                  href="#"
-                  aria-label={s.label}
-                  className="font-mono text-arcade-muted text-xs tracking-widest hover:text-neon-cyan transition-colors"
+                  title={s.label}
+                  className="font-mono text-arcade-muted text-xs tracking-widest"
                 >
                   {s.glyph}
-                </a>
+                </span>
               ))}
             </div>
           </div>
 
           {/* Col 2 — Navigate */}
           <div>
-            <h4 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
+            <h3 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
               NAVIGATE
-            </h4>
+            </h3>
             <ul className="space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
@@ -98,9 +101,9 @@ export default function Footer() {
 
           {/* Col 3 — Hours */}
           <div>
-            <h4 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
+            <h3 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
               HOURS
-            </h4>
+            </h3>
             <ul className="space-y-2">
               {operatingHours.map((schedule) => (
                 <li key={schedule.day} className="flex justify-between gap-4">
@@ -120,9 +123,9 @@ export default function Footer() {
 
           {/* Col 4 — Find Us */}
           <div>
-            <h4 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
+            <h3 className="font-mono text-neon-cyan text-xs tracking-[0.3em] uppercase mb-5">
               FIND US
-            </h4>
+            </h3>
             <address className="not-italic">
               <p className="text-arcade-white text-sm mb-1">412 Retro Row</p>
               <p className="text-arcade-white text-sm mb-4">Sacramento, CA 95814</p>
@@ -175,7 +178,7 @@ export default function Footer() {
             DESIGNED BY ALECTRONIC SOLUTION
           </a>
           <a
-            href="#"
+            href="#main-content"
             className="font-mono text-arcade-muted text-xs tracking-widest hover:text-neon-cyan transition-colors"
           >
             BACK TO TOP ↑

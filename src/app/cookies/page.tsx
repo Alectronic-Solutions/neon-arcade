@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
 import LegalPageLayout, { LegalSection } from '@/components/LegalPageLayout'
 
+const TITLE = 'Cookie Policy'
+const DESCRIPTION = 'How Neon Arcade uses cookies on this website and how you can control them.'
+
 export const metadata: Metadata = {
-  title: 'Cookie Policy | Neon Arcade',
-  description: 'How Neon Arcade uses cookies on this website and how you can control them.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: 'cookies' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: 'cookies' },
+  twitter: { title: TITLE, description: DESCRIPTION },
 }
 
 export default function CookiesPage() {
@@ -27,7 +33,7 @@ export default function CookiesPage() {
 
       <LegalSection title="Controlling Cookies">
         <p>
-          Most web browsers let you control or delete cookies through their settings. You can usually find these settings in the "Privacy" or "Security" section of your browser. Blocking essential cookies may affect how some parts of the website function, such as the mobile menu.
+          Most web browsers let you control or delete cookies through their settings. You can usually find these settings in the &ldquo;Privacy&rdquo; or &ldquo;Security&rdquo; section of your browser. Blocking essential cookies may affect how some parts of the website function, such as the mobile menu.
         </p>
       </LegalSection>
 

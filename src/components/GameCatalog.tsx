@@ -177,14 +177,34 @@ export default function GameCatalog() {
 
         {/* Filter tabs */}
         <div
+          role="tablist"
+          aria-label="Filter cabinets by era"
           className="flex overflow-x-auto mb-3"
           style={{ borderBottom: '1px solid rgba(0,240,255,0.1)' }}
+          onKeyDown={(e) => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+            e.preventDefault()
+            const idx = ERA_TABS.findIndex((t) => t.id === activeEra)
+            const nextIdx =
+              e.key === 'ArrowRight'
+                ? (idx + 1) % ERA_TABS.length
+                : (idx - 1 + ERA_TABS.length) % ERA_TABS.length
+            const nextTab = ERA_TABS[nextIdx]
+            setActiveEra(nextTab.id)
+            const el = document.getElementById(`era-tab-${nextTab.id}`)
+            el?.focus()
+          }}
         >
           {ERA_TABS.map((tab) => {
             const active = activeEra === tab.id
             return (
               <button
                 key={tab.id}
+                id={`era-tab-${tab.id}`}
+                role="tab"
+                aria-selected={active}
+                aria-controls="game-catalog-grid"
+                tabIndex={active ? 0 : -1}
                 onClick={() => setActiveEra(tab.id)}
                 className="relative font-mono text-xs tracking-widest uppercase py-3 px-5 whitespace-nowrap transition-all duration-150 shrink-0"
                 style={{
@@ -216,7 +236,7 @@ export default function GameCatalog() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div id="game-catalog-grid" role="tabpanel" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {visible.map((machine) => (
             <MachineCard key={machine.id} machine={machine} onSelect={setSelectedMachine} />
           ))}

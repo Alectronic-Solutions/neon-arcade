@@ -3,6 +3,17 @@
 import { useState } from 'react'
 import { partyPackages, type PartyPackage } from '@/data/arcade'
 
+function PackageCtaStyles() {
+  return (
+    <style>{`
+      .pkg-cta-outline:hover,
+      .pkg-cta-outline:focus-visible {
+        background: rgba(0,240,255,0.08);
+      }
+    `}</style>
+  )
+}
+
 function SectionHeading({ label, title }: { label: string; title: string }) {
   return (
     <div className="text-center mb-12">
@@ -57,7 +68,11 @@ function PackageCard({ pkg }: { pkg: PartyPackage }) {
       <div className="relative overflow-hidden rounded-t-xl h-40 sm:h-44" style={{ flexShrink: 0 }}>
         <img
           src={PACKAGE_IMAGES[pkg.tier]}
-          alt={pkg.name}
+          alt={`${pkg.name} party package at Neon Arcade`}
+          width={600}
+          height={440}
+          loading="lazy"
+          decoding="async"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #15132B 0%, rgba(21,19,43,0.3) 60%, transparent 100%)' }} />
@@ -114,35 +129,30 @@ function PackageCard({ pkg }: { pkg: PartyPackage }) {
         </ul>
 
         {/* Expand toggle */}
-        {!expanded && hiddenCount > 0 && (
+        {hiddenCount > 0 && (
           <button
-            onClick={() => setExpanded(true)}
+            onClick={() => setExpanded((e) => !e)}
+            aria-expanded={expanded}
             className="font-mono text-xs text-neon-cyan/70 hover:text-neon-cyan transition-colors text-left"
           >
-            + {hiddenCount} more included
+            {expanded ? '− show fewer' : `+ ${hiddenCount} more included`}
           </button>
         )}
 
         {/* Deposit note */}
-        <p className="font-mono text-xs text-arcade-muted/60">
+        <p className="font-mono text-xs text-arcade-muted/80">
           {pkg.depositPercent}% deposit to secure date
         </p>
 
         {/* CTA */}
         <a
           href="#book"
-          className="block text-center font-mono font-bold tracking-widest uppercase text-sm py-3 px-6 rounded-lg transition-all"
+          className={`block text-center font-mono font-bold tracking-widest uppercase text-sm py-3 px-6 rounded-lg transition-all${isFeatured ? '' : ' pkg-cta-outline'}`}
           style={
             isFeatured
               ? { backgroundColor: '#FF007F', color: '#0B0A16' }
               : { border: '1px solid rgba(0,240,255,0.25)', color: '#00F0FF', background: 'transparent' }
           }
-          onMouseEnter={(e) => {
-            if (!isFeatured) (e.currentTarget as HTMLElement).style.background = 'rgba(0,240,255,0.08)'
-          }}
-          onMouseLeave={(e) => {
-            if (!isFeatured) (e.currentTarget as HTMLElement).style.background = 'transparent'
-          }}
         >
           {pkg.tier === 'royalty' ? '[ INQUIRE BUYOUT ]' : '[ SECURE DATE — $150 DEPOSIT ]'}
         </a>
@@ -154,6 +164,7 @@ function PackageCard({ pkg }: { pkg: PartyPackage }) {
 export default function PartyPackages() {
   return (
     <section id="packages" className="py-24 px-6 bg-arcade-bg">
+      <PackageCtaStyles />
       <div className="max-w-6xl mx-auto">
         <SectionHeading label="Private Events" title="Party Packages" />
         <p className="text-arcade-muted text-center text-base mb-14 max-w-md mx-auto">

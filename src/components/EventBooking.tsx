@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 
 const EVENT_TYPES = [
   { id: 'kids', label: "Kids Birthday" },
@@ -54,12 +54,37 @@ function MiniCalendar({
 
   const [viewYear, setViewYear] = useState(today.getFullYear())
   const [viewMonth, setViewMonth] = useState(today.getMonth())
+  const dayButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({})
 
   const cells = useMemo(() => {
     const firstDay = new Date(viewYear, viewMonth, 1).getDay()
     const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
     return { firstDay, daysInMonth }
   }, [viewYear, viewMonth])
+
+  const monthPrefix = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`
+  const selectedDay =
+    selectedDate.startsWith(monthPrefix) ? parseInt(selectedDate.slice(-2), 10) : null
+  const isCurrentMonthView = viewYear === today.getFullYear() && viewMonth === today.getMonth()
+  const focusableDay = selectedDay ?? (isCurrentMonthView ? today.getDate() : 1)
+
+  function focusDay(day: number) {
+    dayButtonRefs.current[day]?.focus()
+  }
+
+  function handleDayKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, day: number) {
+    const dow = (cells.firstDay + day - 1) % 7
+    let next = day
+    if (e.key === 'ArrowRight') next = day + 1
+    else if (e.key === 'ArrowLeft') next = day - 1
+    else if (e.key === 'ArrowDown') next = day + 7
+    else if (e.key === 'ArrowUp') next = day - 7
+    else if (e.key === 'Home') next = day - dow
+    else if (e.key === 'End') next = day + (6 - dow)
+    else return
+    e.preventDefault()
+    if (next >= 1 && next <= cells.daysInMonth) focusDay(next)
+  }
 
   function prevMonth() {
     if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11) }
@@ -85,17 +110,23 @@ function MiniCalendar({
       {/* Month nav */}
       <div className="flex items-center justify-between mb-4">
         <button
+          type="button"
           onClick={prevMonth}
-          className="font-mono text-arcade-muted hover:text-neon-cyan transition-colors text-lg px-1"
+          aria-label="Previous month"
+          className="font-mono text-arcade-muted hover:text-neon-cyan transition-colors text-lg flex items-center justify-center"
+          style={{ width: '44px', height: '44px' }}
         >
           ‹
         </button>
-        <span className="font-mono text-neon-cyan text-xs tracking-widest uppercase">
+        <span className="font-mono text-neon-cyan text-xs tracking-widest uppercase" aria-live="polite">
           {MONTHS[viewMonth]} {viewYear}
         </span>
         <button
+          type="button"
           onClick={nextMonth}
-          className="font-mono text-arcade-muted hover:text-neon-cyan transition-colors text-lg px-1"
+          aria-label="Next month"
+          className="font-mono text-arcade-muted hover:text-neon-cyan transition-colors text-lg flex items-center justify-center"
+          style={{ width: '44px', height: '44px' }}
         >
           ›
         </button>
@@ -120,12 +151,28 @@ function MiniCalendar({
           const isSelected = iso === selectedDate
           const isToday = date.getTime() === today.getTime()
 
+          const fullLabel = date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })
+
           return (
             <button
               key={day}
+              ref={(el) => {
+                dayButtonRefs.current[day] = el
+              }}
+              type="button"
               disabled={isPast}
+              tabIndex={day === focusableDay ? 0 : -1}
               onClick={() => onSelect(iso)}
-              className="font-mono text-xs rounded transition-all w-8 h-8 sm:w-7 sm:h-7 mx-auto flex items-center justify-center"
+              onKeyDown={(e) => handleDayKeyDown(e, day)}
+              aria-label={`${fullLabel}${isSelected ? ', selected' : ''}${isToday ? ', today' : ''}`}
+              aria-current={isToday ? 'date' : undefined}
+              aria-pressed={isSelected}
+              className="font-mono text-xs rounded transition-all w-10 h-10 sm:w-8 sm:h-8 mx-auto flex items-center justify-center"
               style={
                 isSelected
                   ? { backgroundColor: '#FF007F', color: '#0B0A16', fontWeight: 700 }
@@ -169,8 +216,20 @@ export default function EventBooking() {
   const canAdvance1 = eventType !== ''
   const canAdvance2 = selectedDate !== '' && selectedTime !== ''
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (step !== 3) return
+    setSubmitted(true)
+  }
+
   return (
-    <div className="max-w-2xl mx-auto">
+    <form className="max-w-2xl mx-auto" onSubmit={handleSubmit}>
+      <style>{`
+        .eb-radio-input:focus-visible + .eb-radio-target {
+          outline: 2px solid #00F0FF;
+          outline-offset: 2px;
+        }
+      `}</style>
       {/* Section heading */}
       <div className="text-center mb-12">
         <span className="font-mono text-neon-cyan text-sm tracking-[0.3em] uppercase">
@@ -186,11 +245,13 @@ export default function EventBooking() {
       </div>
 
       {/* Step indicators */}
-      <div className="flex items-center justify-center gap-3 mb-10">
+      <div className="flex items-center justify-center gap-3 mb-10" role="list" aria-label="Booking progress">
         {[1, 2, 3].map((s) => (
-          <div key={s} className="flex items-center gap-3">
+          <div key={s} className="flex items-center gap-3" role="listitem">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center font-mono text-sm font-bold transition-all"
+              aria-current={step === s ? 'step' : undefined}
+              aria-label={`Step ${s} of 3${step > s ? ', completed' : step === s ? ', current' : ''}`}
               style={
                 step === s
                   ? { backgroundColor: '#FF007F', color: '#0B0A16' }
@@ -220,26 +281,38 @@ export default function EventBooking() {
           <p className="font-mono text-neon-cyan text-xs tracking-widest uppercase text-center mb-6">
             SELECT EVENT TYPE
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
-            {EVENT_TYPES.map((et) => (
-              <button
-                key={et.id}
-                onClick={() => setEventType(et.id)}
-                className="py-4 px-4 rounded font-mono text-sm tracking-wider uppercase transition-all"
-                style={
-                  eventType === et.id
-                    ? { backgroundColor: '#00F0FF', color: '#0B0A16', fontWeight: 700 }
-                    : {
-                        border: '1px solid rgba(0,240,255,0.35)',
-                        color: '#A39FD1',
-                      }
-                }
-              >
-                {et.label}
-              </button>
-            ))}
+          <div role="radiogroup" aria-label="Event type" className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+            {EVENT_TYPES.map((et) => {
+              const checked = eventType === et.id
+              return (
+                <label key={et.id} className="eb-radio-option block">
+                  <input
+                    type="radio"
+                    name="event-type"
+                    value={et.id}
+                    checked={checked}
+                    onChange={() => setEventType(et.id)}
+                    className="eb-radio-input sr-only"
+                  />
+                  <span
+                    className="eb-radio-target block py-4 px-4 rounded font-mono text-sm tracking-wider uppercase transition-all text-center"
+                    style={
+                      checked
+                        ? { backgroundColor: '#00F0FF', color: '#0B0A16', fontWeight: 700 }
+                        : {
+                            border: '1px solid rgba(0,240,255,0.35)',
+                            color: '#A39FD1',
+                          }
+                    }
+                  >
+                    {et.label}
+                  </span>
+                </label>
+              )
+            })}
           </div>
           <button
+            type="button"
             onClick={() => canAdvance1 && setStep(2)}
             className="w-full py-4 font-mono font-bold tracking-widest uppercase text-sm rounded transition-opacity min-h-11"
             style={
@@ -275,26 +348,38 @@ export default function EventBooking() {
             <label className="block font-mono text-arcade-muted text-xs tracking-widest uppercase mb-2">
               Start Time
             </label>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
-              {TIME_SLOTS.map((slot) => (
-                <button
-                  key={slot}
-                  onClick={() => setSelectedTime(slot)}
-                  className="py-3 rounded font-mono text-xs tracking-wide transition-all min-h-11"
-                  style={
-                    selectedTime === slot
-                      ? { backgroundColor: '#FF007F', color: '#0B0A16', fontWeight: 700 }
-                      : { border: '1px solid rgba(0,240,255,0.3)', color: '#A39FD1' }
-                  }
-                >
-                  {slot}
-                </button>
-              ))}
+            <div role="radiogroup" aria-label="Start time" className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
+              {TIME_SLOTS.map((slot) => {
+                const checked = selectedTime === slot
+                return (
+                  <label key={slot} className="eb-radio-option block">
+                    <input
+                      type="radio"
+                      name="time-slot"
+                      value={slot}
+                      checked={checked}
+                      onChange={() => setSelectedTime(slot)}
+                      className="eb-radio-input sr-only"
+                    />
+                    <span
+                      className="eb-radio-target py-3 rounded font-mono text-xs tracking-wide transition-all min-h-11 text-center flex items-center justify-center"
+                      style={
+                        checked
+                          ? { backgroundColor: '#FF007F', color: '#0B0A16', fontWeight: 700 }
+                          : { border: '1px solid rgba(0,240,255,0.3)', color: '#A39FD1' }
+                      }
+                    >
+                      {slot}
+                    </span>
+                  </label>
+                )
+              })}
             </div>
           </div>
 
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => setStep(1)}
               className="flex-1 py-3 font-mono text-sm tracking-widest uppercase rounded min-h-11"
               style={{ border: '1px solid rgba(0,240,255,0.3)', color: '#A39FD1' }}
@@ -302,6 +387,7 @@ export default function EventBooking() {
               ← BACK
             </button>
             <button
+              type="button"
               onClick={() => canAdvance2 && setStep(3)}
               className="flex-2 py-3 font-mono font-bold tracking-widest uppercase text-sm rounded transition-opacity min-h-11"
               style={
@@ -326,31 +412,38 @@ export default function EventBooking() {
 
           {/* Left: label, readout, slider, nav */}
           <div className="col-span-1 lg:col-span-7">
-            <p className="font-mono text-neon-cyan text-xs tracking-widest uppercase text-center mb-6">
+            <label
+              htmlFor="guest-count-slider"
+              className="block font-mono text-neon-cyan text-xs tracking-widest uppercase text-center mb-6"
+            >
               HOW MANY GUESTS?
-            </p>
+            </label>
 
             <div className="mb-4 text-center">
               <span
                 className="font-mono font-bold text-neon-yellow"
                 style={{ fontSize: '3rem' }}
+                aria-hidden="true"
               >
                 {guestCount}
               </span>
-              <span className="font-mono text-arcade-muted text-sm ml-2">GUESTS</span>
+              <span className="font-mono text-arcade-muted text-sm ml-2" aria-hidden="true">GUESTS</span>
             </div>
 
             <input
+              id="guest-count-slider"
               type="range"
               min={10}
               max={150}
               value={guestCount}
               onChange={(e) => setGuestCount(Number(e.target.value))}
+              aria-valuetext={`${guestCount} guests`}
               className="w-full mb-8"
             />
 
             <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => setStep(2)}
                 className="flex-1 py-3 font-mono text-sm tracking-widest uppercase rounded min-h-11"
                 style={{ border: '1px solid rgba(0,240,255,0.3)', color: '#A39FD1' }}
@@ -358,7 +451,7 @@ export default function EventBooking() {
                 ← BACK
               </button>
               <button
-                onClick={() => setSubmitted(true)}
+                type="submit"
                 className="flex-2 py-4 font-mono font-bold tracking-widest uppercase text-sm rounded"
                 style={{
                   backgroundColor: '#FF007F',
@@ -375,6 +468,9 @@ export default function EventBooking() {
           <div className="col-span-1 lg:col-span-5">
             <div
               className="font-mono text-sm rounded p-5 lg:sticky lg:top-20"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
               style={{
                 border: '1px solid rgba(0,240,255,0.15)',
                 backgroundColor: '#15132B',
@@ -436,6 +532,7 @@ export default function EventBooking() {
       {submitted && (
         <div
           className="text-center py-12 px-8 rounded"
+          role="status"
           style={{ border: '1px solid rgba(0,240,255,0.15)', backgroundColor: '#15132B' }}
         >
           <p
@@ -451,6 +548,7 @@ export default function EventBooking() {
           </p>
           <div className="mt-8">
             <button
+              type="button"
               onClick={() => {
                 setSubmitted(false)
                 setStep(1)
@@ -466,6 +564,6 @@ export default function EventBooking() {
           </div>
         </div>
       )}
-    </div>
+    </form>
   )
 }

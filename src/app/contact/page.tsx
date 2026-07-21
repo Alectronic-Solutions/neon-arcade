@@ -1,18 +1,25 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { operatingHours } from '@/data/arcade'
 
+const TITLE = 'Contact'
+const DESCRIPTION = 'Get in touch with Neon Arcade for booking questions, group rates, or general inquiries about our private arcade venue in Sacramento, CA.'
+
 export const metadata: Metadata = {
-  title: 'Contact | Neon Arcade',
-  description: 'Get in touch with Neon Arcade for booking questions, group rates, or general inquiries about our private arcade venue in Sacramento, CA.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: 'contact' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: 'contact' },
+  twitter: { title: TITLE, description: DESCRIPTION },
 }
 
 export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main-content">
         <section className="bg-arcade-bg pt-32 pb-24 px-6 min-h-screen">
           <div className="max-w-5xl mx-auto">
             <h1
@@ -82,9 +89,9 @@ export default function ContactPage() {
             >
               <p className="text-arcade-muted text-sm leading-relaxed">
                 Ready to lock in a date? Head to our{' '}
-                <a href="/#book" className="text-neon-cyan hover:underline">
+                <Link href="/#book" className="text-neon-cyan hover:underline">
                   booking section
-                </a>{' '}
+                </Link>{' '}
                 to start a private event request directly.
               </p>
             </div>

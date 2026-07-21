@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
 import LegalPageLayout, { LegalSection } from '@/components/LegalPageLayout'
 
+const TITLE = 'Privacy Policy'
+const DESCRIPTION = 'How Neon Arcade collects, uses, and protects information submitted through booking inquiries and the website.'
+
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Neon Arcade',
-  description: 'How Neon Arcade collects, uses, and protects information submitted through booking inquiries and the website.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: 'privacy' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: 'privacy' },
+  twitter: { title: TITLE, description: DESCRIPTION },
 }
 
 export default function PrivacyPage() {
@@ -57,7 +63,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="Changes to This Policy">
         <p>
-          We may update this Privacy Policy from time to time. Any changes will be posted on this page with a revised "last updated" date. Continued use of the website after changes are posted means you accept the updated policy.
+          We may update this Privacy Policy from time to time. Any changes will be posted on this page with a revised &ldquo;last updated&rdquo; date. Continued use of the website after changes are posted means you accept the updated policy.
         </p>
       </LegalSection>
 

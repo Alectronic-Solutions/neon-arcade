@@ -24,9 +24,13 @@ function hasEnoughBufferAhead(video: HTMLVideoElement) {
   return false
 }
 
+const POSTER_SRC = 'https://images.unsplash.com/photo-1511882150382-421056c89033?w=1800&q=80'
+
 export default function HeroVideoBackground() {
   const videoRefs = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)]
   const [activeLayer, setActiveLayer] = useState<0 | 1>(0)
+  const [showStaticFallback, setShowStaticFallback] = useState(false)
+  const [paused, setPaused] = useState(false)
   const activeLayerRef = useRef<0 | 1>(0)
   const currentIndexRef = useRef(0)
   const swappingRef = useRef(false)
@@ -47,8 +51,12 @@ export default function HeroVideoBackground() {
   }, [activeLayer])
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reducedMotion) return
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isNarrowViewport = window.matchMedia('(max-width: 767px)').matches
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    const skipVideo = prefersReduced || isNarrowViewport || Boolean(conn?.saveData)
+    setShowStaticFallback(skipVideo)
+    if (skipVideo) return
 
     const active = videoRefs[0].current
     const standby = videoRefs[1].current
@@ -154,6 +162,32 @@ export default function HeroVideoBackground() {
     erroredRef.current.add(layerIndex)
   }
 
+  const togglePause = () => {
+    const activeVideo = videoRefs[activeLayerRef.current].current
+    if (!activeVideo) return
+    if (paused) {
+      activeVideo.play().catch(() => {})
+      setPaused(false)
+    } else {
+      activeVideo.pause()
+      setPaused(true)
+    }
+  }
+
+  if (showStaticFallback) {
+    return (
+      <div className="absolute inset-0 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={POSTER_SRC}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="absolute inset-0 overflow-hidden">
       {[0, 1].map((layerIndex) => (
@@ -170,13 +204,28 @@ export default function HeroVideoBackground() {
           muted
           playsInline
           preload="auto"
-          poster="https://images.unsplash.com/photo-1511882150382-421056c89033?w=1800&q=80"
+          poster={POSTER_SRC}
           onTimeUpdate={handleTimeUpdate(layerIndex as 0 | 1)}
           onEnded={handleEnded(layerIndex as 0 | 1)}
           onCanPlayThrough={handleCanPlayThrough(layerIndex as 0 | 1)}
           onError={handleError(layerIndex as 0 | 1)}
         />
       ))}
+      <button
+        type="button"
+        onClick={togglePause}
+        aria-label={paused ? 'Play background video' : 'Pause background video'}
+        className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full font-mono text-xs"
+        style={{
+          width: '2.5rem',
+          height: '2.5rem',
+          background: 'rgba(11,10,22,0.7)',
+          border: '1px solid rgba(0,240,255,0.4)',
+          color: '#00F0FF',
+        }}
+      >
+        {paused ? '▶' : '❚❚'}
+      </button>
     </div>
   )
 }

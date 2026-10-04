@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { arcadeMachines, type ArcadeMachine } from '@/data/arcade'
 import { withBasePath } from '@/lib/paths'
 import GameModal from './GameModal'
+import SectionHeading from './SectionHeading'
 
 type Era = 'all' | 'golden-age' | 'classics' | 'fighters' | 'pinball-rhythm'
 
@@ -26,44 +27,25 @@ const ERA_LABELS: Record<string, string> = {
 const INITIAL_COUNT = 12
 
 function MachineCard({ machine, onSelect }: { machine: ArcadeMachine; onSelect: (machine: ArcadeMachine) => void }) {
-  const [hovered, setHovered] = useState(false)
-
   return (
-    <div
-      className="group relative flex flex-col rounded-sm overflow-hidden cursor-pointer transition-transform duration-200"
-      style={{
-        background: '#15132B',
-        border: hovered ? '1px solid #00F0FF' : '1px solid rgba(0,240,255,0.12)',
-        boxShadow: hovered
-          ? '0 0 28px rgba(0,240,255,0.18), 0 8px 32px rgba(0,0,0,0.5)'
-          : '0 2px 16px rgba(0,0,0,0.3)',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <button
+      type="button"
       onClick={() => onSelect(machine)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onSelect(machine)
-        }
-      }}
-      role="button"
-      tabIndex={0}
+      aria-label={`${machine.name}, ${machine.year}, ${machine.players} player${machine.players > 1 ? 's' : ''}. View details`}
+      className="group relative flex flex-col text-left rounded-sm overflow-hidden bg-arcade-surface border border-neon-cyan/12 shadow-[0_2px_16px_rgba(0,0,0,0.3)] transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-neon-cyan hover:shadow-[0_0_28px_rgba(0,240,255,0.18),0_8px_32px_rgba(0,0,0,0.5)] active:scale-[0.98] focus-visible:border-neon-cyan"
     >
       {/* Image area */}
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/3' }}>
+      <span className="block relative w-full overflow-hidden" style={{ aspectRatio: '4/3' }}>
         <Image
           src={withBasePath(machine.coverImage)}
-          alt={machine.name}
+          alt=""
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover transition-transform duration-500"
-          style={{ transform: hovered ? 'scale(1.08)' : 'scale(1)' }}
+          className="object-cover transition-transform duration-500 group-hover:scale-108"
         />
 
         {/* Gradient overlay bottom-to-top */}
-        <div
+        <span
           className="absolute inset-0"
           style={{
             background: 'linear-gradient(to top, #15132B 0%, rgba(21,19,43,0.55) 50%, transparent 100%)',
@@ -72,9 +54,9 @@ function MachineCard({ machine, onSelect }: { machine: ArcadeMachine; onSelect: 
 
         {/* Era chip — top left */}
         <span
-          className="absolute top-2.5 left-2.5 font-mono text-neon-cyan text-xs tracking-widest px-2 py-0.5 rounded-sm"
+          className="absolute top-2 left-2 font-mono text-neon-cyan tracking-widest px-1.5 py-0.5 rounded-sm"
           style={{
-            background: 'rgba(0,240,255,0.1)',
+            background: 'rgba(11,10,22,0.75)',
             border: '1px solid rgba(0,240,255,0.35)',
             fontSize: '0.6rem',
             textShadow: '0 0 8px rgba(0,240,255,0.6)',
@@ -82,48 +64,27 @@ function MachineCard({ machine, onSelect }: { machine: ArcadeMachine; onSelect: 
         >
           {ERA_LABELS[machine.era]}
         </span>
-
-        {/* Player count — top right */}
-        <span
-          className="absolute top-2.5 right-2.5 font-mono text-neon-yellow text-xs tracking-widest px-2 py-0.5 rounded-sm"
-          style={{
-            background: 'rgba(255,230,0,0.08)',
-            border: '1px solid rgba(255,230,0,0.3)',
-            fontSize: '0.6rem',
-          }}
-        >
-          {machine.players}P
-        </span>
-      </div>
+      </span>
 
       {/* Text content */}
-      <div className="flex flex-col gap-1 px-4 py-3">
-        <h3
-          className="text-arcade-white font-extrabold uppercase tracking-wide leading-tight"
-          style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)' }}
-        >
+      <span className="flex flex-col gap-1 px-3 sm:px-4 py-3">
+        <span className="text-arcade-white font-extrabold uppercase tracking-wide leading-tight text-[0.8rem] sm:text-sm">
           {machine.name}
-        </h3>
-        <p
-          className="font-mono text-neon-cyan tracking-wider phosphor-cyan"
-          style={{ fontSize: '0.65rem' }}
-        >
-          {machine.year} · {machine.manufacturer}
-        </p>
-        <p className="text-arcade-muted" style={{ fontSize: '0.65rem' }}>
-          {machine.genre}
-        </p>
-      </div>
+        </span>
+        <span className="font-mono text-crt-green tracking-wider phosphor-green text-[0.65rem] sm:text-xs">
+          {machine.year} · {machine.players}P
+        </span>
+        <span className="font-mono text-arcade-muted text-[0.6rem] sm:text-[0.65rem] leading-snug">
+          {machine.manufacturer} · {machine.genre}
+        </span>
+      </span>
 
       {/* Bottom accent line on hover */}
-      <div
-        className="absolute bottom-0 left-0 h-px transition-all duration-300"
-        style={{
-          width: hovered ? '100%' : '0%',
-          background: 'linear-gradient(to right, #00F0FF, #FF007F)',
-        }}
+      <span
+        className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-300"
+        style={{ background: 'linear-gradient(to right, #00F0FF, #FF007F)' }}
       />
-    </div>
+    </button>
   )
 }
 
@@ -132,9 +93,10 @@ export default function GameCatalog() {
   const [expanded, setExpanded] = useState(false)
   const [selectedMachine, setSelectedMachine] = useState<ArcadeMachine | null>(null)
 
-  useEffect(() => {
+  function selectEra(era: Era) {
+    setActiveEra(era)
     setExpanded(false)
-  }, [activeEra])
+  }
 
   const filtered =
     activeEra === 'all'
@@ -146,40 +108,16 @@ export default function GameCatalog() {
 
   return (
     <>
-    <section id="games" className="py-28 px-6" style={{ background: '#0B0A16' }}>
+    <section id="games" className="py-16 sm:py-28 px-4 sm:px-6" style={{ background: '#0B0A16' }}>
       <div className="max-w-6xl mx-auto">
 
-        {/* Section heading */}
-        <div className="text-center mb-16">
-          {/* Decorative rule */}
-          <div className="flex items-center justify-center gap-3 mb-5">
-            <div className="h-px flex-1 max-w-24" style={{ background: 'linear-gradient(to right, transparent, rgba(0,240,255,0.4))' }} />
-            <span className="font-mono text-neon-cyan tracking-[0.35em] text-xs uppercase phosphor-cyan">
-              Cabinet Roster
-            </span>
-            <div className="h-px flex-1 max-w-24" style={{ background: 'linear-gradient(to left, transparent, rgba(0,240,255,0.4))' }} />
-          </div>
-
-          <h2
-            className="font-extrabold tracking-widest uppercase text-arcade-white mb-5"
-            style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', letterSpacing: '0.12em' }}
-          >
-            Game Catalog
-          </h2>
-
-          {/* Cyan accent bar */}
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-8 h-px bg-neon-cyan/40" />
-            <div className="w-16 h-0.5 bg-neon-cyan" style={{ boxShadow: '0 0 8px #00F0FF' }} />
-            <div className="w-8 h-px bg-neon-cyan/40" />
-          </div>
-        </div>
+        <SectionHeading eyebrow="Cabinet Roster" title="Game Catalog" />
 
         {/* Filter tabs */}
         <div
           role="tablist"
           aria-label="Filter cabinets by era"
-          className="flex overflow-x-auto mb-3"
+          className="no-scrollbar flex overflow-x-auto mb-3"
           style={{ borderBottom: '1px solid rgba(0,240,255,0.1)' }}
           onKeyDown={(e) => {
             if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
@@ -190,7 +128,7 @@ export default function GameCatalog() {
                 ? (idx + 1) % ERA_TABS.length
                 : (idx - 1 + ERA_TABS.length) % ERA_TABS.length
             const nextTab = ERA_TABS[nextIdx]
-            setActiveEra(nextTab.id)
+            selectEra(nextTab.id)
             const el = document.getElementById(`era-tab-${nextTab.id}`)
             el?.focus()
           }}
@@ -205,14 +143,15 @@ export default function GameCatalog() {
                 aria-selected={active}
                 aria-controls="game-catalog-grid"
                 tabIndex={active ? 0 : -1}
-                onClick={() => setActiveEra(tab.id)}
-                className="relative font-mono text-xs tracking-widest uppercase py-3 px-5 whitespace-nowrap transition-all duration-150 shrink-0"
+                onClick={() => selectEra(tab.id)}
+                className="relative flex-1 sm:flex-none font-mono text-xs tracking-widest uppercase py-3 px-2 sm:px-5 whitespace-nowrap transition-all duration-150 min-h-11"
                 style={{
                   color: active ? '#FF007F' : '#A39FD1',
                   background: active ? 'rgba(255,0,127,0.07)' : 'transparent',
                 }}
               >
-                {tab.label}
+                <span className="sm:hidden">{tab.short}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
                 {active && (
                   <span
                     className="absolute bottom-0 left-0 right-0 h-0.5"
@@ -231,12 +170,12 @@ export default function GameCatalog() {
             {' '}CABINETS{activeEra !== 'all' ? ` · ${ERA_TABS.find(t => t.id === activeEra)?.label}` : ' ON FLOOR'}
           </p>
           <p className="font-mono text-arcade-muted tracking-widest uppercase hidden sm:block" style={{ fontSize: '0.6rem' }}>
-            HOVER TO EXPLORE ↗
+            SELECT A CABINET FOR SPECS ↗
           </p>
         </div>
 
         {/* Grid */}
-        <div id="game-catalog-grid" role="tabpanel" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div id="game-catalog-grid" role="tabpanel" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {visible.map((machine) => (
             <MachineCard key={machine.id} machine={machine} onSelect={setSelectedMachine} />
           ))}
@@ -247,25 +186,9 @@ export default function GameCatalog() {
           <div className="flex justify-center mt-10">
             <button
               onClick={() => setExpanded(!expanded)}
-              className="font-mono tracking-widest uppercase text-xs px-8 py-3 transition-all duration-150"
-              style={{
-                color: '#FF007F',
-                border: '1px solid rgba(255,0,127,0.4)',
-                background: 'transparent',
-                letterSpacing: '0.2em',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget
-                el.style.background = 'rgba(255,0,127,0.12)'
-                el.style.borderColor = '#FF007F'
-                el.style.boxShadow = '0 0 20px rgba(255,0,127,0.2)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget
-                el.style.background = 'transparent'
-                el.style.borderColor = 'rgba(255,0,127,0.4)'
-                el.style.boxShadow = 'none'
-              }}
+              aria-expanded={expanded}
+              aria-controls="game-catalog-grid"
+              className="font-mono uppercase text-xs tracking-[0.2em] px-8 py-3.5 w-full sm:w-auto text-neon-magenta border border-neon-magenta/40 transition-all duration-150 hover:bg-neon-magenta/12 hover:border-neon-magenta hover:shadow-[0_0_20px_rgba(255,0,127,0.2)] active:bg-neon-magenta/12"
             >
               {expanded
                 ? '↑  SHOW LESS'

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
@@ -18,6 +18,13 @@ const geistMono = Geist_Mono({
 const TITLE = "Neon Arcade | Private Arcade Parties & Event Venue in Sacramento CA";
 const DESCRIPTION =
   "Book Neon Arcade for private parties, corporate events, and birthday buyouts. Classic arcade cabinets, dedicated party hosts, and fully catered packages in Sacramento, CA.";
+
+export const viewport: Viewport = {
+  themeColor: "#0B0A16",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(`${SITE_URL}/`),
@@ -139,6 +146,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://images.unsplash.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

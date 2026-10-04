@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import LegalPageLayout, { LegalSection } from '@/components/LegalPageLayout'
 
@@ -45,7 +46,7 @@ export default function CookiesPage() {
 
       <LegalSection title="Contact Us">
         <p>
-          Questions about this Cookie Policy can be sent to <a href="mailto:hello@neonarcade.com" className="text-neon-cyan hover:underline">hello@neonarcade.com</a>. See our <a href="/privacy" className="text-neon-cyan hover:underline">Privacy Policy</a> for more on how we handle information generally.
+          Questions about this Cookie Policy can be sent to <a href="mailto:hello@neonarcade.com" className="text-neon-cyan hover:underline">hello@neonarcade.com</a>. See our <Link href="/privacy" className="text-neon-cyan hover:underline">Privacy Policy</Link> for more on how we handle information generally.
         </p>
       </LegalSection>
     </LegalPageLayout>

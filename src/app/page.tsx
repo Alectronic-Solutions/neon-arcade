@@ -69,12 +69,10 @@ export default function Page() {
       <main id="main-content">
         <Hero />
         <PartyPackages />
-        <section id="book" className="py-24 px-6 bg-arcade-bg">
+        <section id="book" className="py-16 sm:py-24 px-5 sm:px-6 bg-arcade-bg">
           <EventBooking />
         </section>
-        <section className="bg-arcade-surface">
-          <GameCatalog />
-        </section>
+        <GameCatalog />
         <Gallery />
         <FAQ />
       </main>

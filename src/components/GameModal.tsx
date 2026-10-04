@@ -28,11 +28,12 @@ export default function GameModal({
   const lastFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (machine) {
-      const raf = requestAnimationFrame(() => setVisible(true))
-      return () => cancelAnimationFrame(raf)
+    if (!machine) return
+    const raf = requestAnimationFrame(() => setVisible(true))
+    return () => {
+      cancelAnimationFrame(raf)
+      setVisible(false)
     }
-    setVisible(false)
   }, [machine])
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export default function GameModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      className="fixed inset-0 z-60 flex items-end sm:items-center justify-center sm:px-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="game-modal-title"
@@ -89,13 +90,15 @@ export default function GameModal({
     >
       <div
         ref={dialogRef}
-        className="relative w-full flex flex-col rounded-sm overflow-hidden"
+        className="relative w-full flex flex-col rounded-t-xl sm:rounded-sm overflow-y-auto overscroll-contain"
         style={{
           maxWidth: '520px',
+          maxHeight: '90svh',
+          paddingBottom: 'env(safe-area-inset-bottom)',
           background: '#15132B',
           border: '1px solid #00F0FF',
           boxShadow: '0 0 28px rgba(0,240,255,0.18), 0 20px 60px rgba(0,0,0,0.6)',
-          transform: visible ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(8px)',
+          transform: visible ? 'scale(1) translateY(0)' : 'scale(0.98) translateY(24px)',
           opacity: visible ? 1 : 0,
           transition: 'transform 220ms ease, opacity 220ms ease',
         }}

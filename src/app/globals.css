@@ -8,19 +8,56 @@
   --color-neon-cyan:      #00F0FF;
   --color-neon-magenta:   #FF007F;
   --color-neon-yellow:    #FFE600;
+  --color-crt-green:      #39FF88;
   --font-sans:  var(--font-geist-sans);
   --font-mono:  var(--font-geist-mono);
 }
 
 html {
   scroll-behavior: smooth;
+  /* Anchor jumps land below the fixed 64px nav instead of under it */
+  scroll-padding-top: 5rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 body {
   background: #0B0A16;
   color: #F8F8FF;
+  overflow-x: clip;
+}
+
+.phosphor-green {
+  text-shadow: 0 0 8px rgba(57, 255, 136, 0.45);
+}
+
+/* Horizontal rails: hide the scrollbar but keep swipe/scroll */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+:focus-visible {
+  outline: 2px solid #00F0FF;
+  outline-offset: 2px;
 }
 
 /* CRT phosphor scanline overlay — 1.5% opacity, no interaction */

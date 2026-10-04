@@ -66,7 +66,7 @@ export default function TermsPage() {
 
       <LegalSection title="Changes to These Terms">
         <p>
-          We may update these Terms from time to time. Changes will be posted on this page with a revised "last updated" date. Continued use of the website or an existing confirmed booking will be honored under the Terms in effect at the time the deposit was paid.
+          We may update these Terms from time to time. Changes will be posted on this page with a revised &ldquo;last updated&rdquo; date. Continued use of the website or an existing confirmed booking will be honored under the Terms in effect at the time the deposit was paid.
         </p>
       </LegalSection>
 

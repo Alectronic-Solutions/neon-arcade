@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import LegalPageLayout, { LegalSection } from '@/components/LegalPageLayout'
 
@@ -33,7 +34,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="Cookies and Tracking">
         <p>
-          The website currently uses only cookies that are necessary for basic functionality, such as remembering your menu state while browsing. We do not currently use third party analytics, advertising pixels, or tracking cookies. If that changes in the future, we will update this policy and our Cookie Policy in advance. See our <a href="/cookies" className="text-neon-cyan hover:underline">Cookie Policy</a> for more detail.
+          The website currently uses only cookies that are necessary for basic functionality, such as remembering your menu state while browsing. We do not currently use third party analytics, advertising pixels, or tracking cookies. If that changes in the future, we will update this policy and our Cookie Policy in advance. See our <Link href="/cookies" className="text-neon-cyan hover:underline">Cookie Policy</Link> for more detail.
         </p>
       </LegalSection>
 
